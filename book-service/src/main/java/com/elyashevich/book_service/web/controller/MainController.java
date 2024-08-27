@@ -41,7 +41,7 @@ public class MainController {
             @Validated(OnCreate.class) @RequestBody final BookDto dto,
             final UriComponentsBuilder uriComponentsBuilder
     ) {
-        final BookEntity book = this.bookService.create(
+        var book = this.bookService.create(
                 this.mapper.toEntity(dto)
         );
         return ResponseEntity
@@ -55,13 +55,13 @@ public class MainController {
                 );
     }
 
-    @PutMapping("{id}")
+    @PatchMapping("{id}")
     public ResponseEntity<BookDto> update(
             @PathVariable("id") final UUID id,
             @Validated(OnUpdate.class) @RequestBody final BookDto dto,
             final UriComponentsBuilder uriComponentsBuilder
     ) {
-        final BookEntity book = this.bookService.update(
+        var book = this.bookService.update(
                 id,
                 this.mapper.toEntity(dto)
         );

@@ -1,7 +1,7 @@
-package com.elyashevich.book_service.web.controller;
+package com.elyashevich.library_service.web.controller;
 
-import com.elyashevich.book_service.domain.exception.NotFoundException;
-import com.elyashevich.book_service.web.dto.ExceptionBody;
+import com.elyashevich.library_service.domain.exception.NotFoundException;
+import com.elyashevich.library_service.web.dto.ExceptionBody;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

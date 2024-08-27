@@ -36,7 +36,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookEntity update(final UUID id, final BookEntity book) {
-        final BookEntity bookEntity = this.getById(id);
+        var bookEntity = this.getById(id);
         return this.repository.save(
                 this.converter.updateConverter(bookEntity, book)
         );
