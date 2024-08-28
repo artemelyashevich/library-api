@@ -10,7 +10,7 @@ import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity(name = "books")
+@Entity(name = "orders")
 @Table
 @Getter
 @Setter
@@ -25,6 +25,7 @@ public class OrderEntity {
     private UUID id;
 
     @Column
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID bookId;
 
     @Column

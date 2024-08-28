@@ -2,6 +2,7 @@ package com.elyashevich.book.config;
 
 import com.elyashevich.book.api.dto.OrderDto;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.common.protocol.types.Field;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -40,7 +41,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ProducerFactory<String, OrderDto> producerFactory() {
+    public ProducerFactory<String, String> producerFactory() {
         var config = new HashMap<String, Object>(3);
 
         config.put(BOOTSTRAP_SERVERS_CONFIG, this.kafkaServers);
@@ -51,7 +52,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, OrderDto> kafkaTemplate() {
+    public KafkaTemplate<String, String> kafkaTemplate() {
         return new KafkaTemplate<>(this.producerFactory());
     }
 }

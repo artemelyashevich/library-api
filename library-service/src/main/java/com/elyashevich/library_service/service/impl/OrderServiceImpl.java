@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,9 +33,19 @@ public class OrderServiceImpl implements OrderService {
         return this.orderRepository.findAll();
     }
 
+
+    /*
+    * @Todo: implements error
+    * */
     @Override
     public OrderEntity create(final OrderEntity order) {
         log.debug("Attempting to create a new order: '{}'.", order);
+
+        order.setOrderIn(LocalDateTime.now());
+        if (order.getExpireIn().isAfter(order.getOrderIn())) {
+            log.warn("");
+            throw new RuntimeException();
+        }
         var newOrder = this.orderRepository.save(order);
 
         log.info("Order with ID '{}' has been created.", newOrder.getId());

@@ -2,35 +2,42 @@ package com.elyashevich.book.service.impl;
 
 import com.elyashevich.book.api.dto.OrderDto;
 import com.elyashevich.book.service.OrderPublisher;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
-
-import static org.springframework.kafka.support.KafkaHeaders.TOPIC;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderPublisherImpl implements OrderPublisher {
 
-    private final KafkaTemplate<String, OrderDto> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Value("${application.kafka.topic:order}")
     private String topicName;
 
     @Override
-    public void sendMessage(final OrderDto orderDto) {
+    public void sendMessage(final OrderDto orderDto) throws JsonProcessingException {
         log.debug("Try to send an order message: {}", orderDto);
+        var order = serializeToJson(orderDto);
+        this.kafkaTemplate.send(topicName, order);
 
-        var message = MessageBuilder
-                .withPayload(orderDto.toString())
-                .setHeader(TOPIC, this.topicName)
-                .build();
-        this.kafkaTemplate.send(message);
+        log.info("Order '{}' message has been successfully sent.", orderDto);
+    }
 
-        log.info("Order '{}' message has been successfully sent.", message.getHeaders().getId());
+    private static String serializeToJson(OrderDto dto) throws JsonProcessingException {
+        var objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return objectMapper
+                .writer()
+                .withDefaultPrettyPrinter()
+                .writeValueAsString(dto);
     }
 }
