@@ -6,12 +6,29 @@ spring:
       discovery:
         locator:
           enabled: true
+          lower-case-service-id: true
       routes:
         - id: book-service
-          uri: lb:http://BOOK-SERVICE
+          uri: lb:http://book-service
           predicates:
             - Path=/api/v1/books/**
         - id: library-service
-          uri: lb:http://LIBRARY-SERVICE
+          uri: lb:http://library-service
           predicates:
             - Path=/api/v1/library/**
+      cors-configurations:
+        '[/**]':
+          allowedOrigins: "*"
+          allowedHeaders:
+            - "*"
+          allowedMethods:
+            - "GET"
+            - "POST"
+            - "PATCH"
+            - "DELETE"
+            - "OPTIONS"
+      default-filters:
+        - name: Retry
+          args:
+            retries: 3
+            methods: GET,POST,PATCH,DELETE

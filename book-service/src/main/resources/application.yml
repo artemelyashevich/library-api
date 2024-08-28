@@ -1,5 +1,13 @@
+logging:
+  level:
+    com.elyashevich.book: DEBUG
 spring:
   application:
     name: book-service
   config:
-    import: optional:configserver:http://localhost:8888
+    import: optional:configserver:http://127.0.0.1:8888
+application:
+  kafka:
+    topic: order
+    replica: 1
+    partition: 1
