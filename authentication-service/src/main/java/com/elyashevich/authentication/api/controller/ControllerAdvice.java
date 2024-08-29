@@ -1,6 +1,7 @@
 package com.elyashevich.authentication.api.controller;
 
 import com.elyashevich.authentication.api.dto.ExceptionBody;
+import com.elyashevich.authentication.exception.InvalidTokenException;
 import com.elyashevich.authentication.exception.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.SQLNonTransientException;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,9 +35,19 @@ public class ControllerAdvice {
         return new ExceptionBody(message);
     }
 
-    @ExceptionHandler(SQLNonTransientException.class)
+    @ExceptionHandler(InvalidTokenException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionBody sql(final SQLException exception) {
+    public ExceptionBody token(final InvalidTokenException exception) {
+        var message = exception.getMessage() == null ? NOT_FOUND_MESSAGE : exception.getMessage();
+        log.warn("Resource was not found: '{}'.", message);
+
+        return new ExceptionBody(message);
+    }
+
+
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionBody sql(final SQLIntegrityConstraintViolationException exception) {
         var message = exception.getMessage() == null ? "Duplicate error" : exception.getMessage();
         log.warn("Duplicate: '{}'.", message);
 

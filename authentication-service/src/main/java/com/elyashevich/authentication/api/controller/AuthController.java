@@ -26,4 +26,9 @@ public class AuthController {
     public AuthResponse login(@Valid @RequestBody final AuthRequest request) {
         return this.authService.login(request);
     }
+
+    @PostMapping("{token}")
+    public String validate(@PathVariable("token") final String token) {
+        return this.authService.validate(token);
+    }
 }

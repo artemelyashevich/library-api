@@ -28,6 +28,11 @@ public class AuthServiceImpl implements AuthService {
         return new AuthResponse(this.createToken(userDetails));
     }
 
+    @Override
+    public String validate(String token) {
+        return TokenUtil.validate(token);
+    }
+
     private String createToken(UserDetails userDetails) {
         return TokenUtil.generateToken(userDetails);
     }

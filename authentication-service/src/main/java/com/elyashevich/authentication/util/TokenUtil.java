@@ -1,5 +1,6 @@
 package com.elyashevich.authentication.util;
 
+import com.elyashevich.authentication.exception.InvalidTokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.experimental.UtilityClass;
@@ -92,5 +93,12 @@ public class TokenUtil {
                 .setExpiration(new Date(issuedAt.getTime() + lifetime))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public static String validate(final String token) {
+        if (getClaimsFromToken(token).getSubject().isEmpty()) {
+            throw new InvalidTokenException("Invalid token.");
+        }
+        return token;
     }
 }

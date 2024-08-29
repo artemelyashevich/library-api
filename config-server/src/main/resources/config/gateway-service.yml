@@ -12,10 +12,14 @@ spring:
           uri: lb:http://book-service
           predicates:
             - Path=/api/v1/books/**
+          filters:
+            - CustomAuthenticationFilter
         - id: library-service
           uri: lb:http://library-service
           predicates:
             - Path=/api/v1/library/**
+          filters:
+            - CustomAuthenticationFilter
         - id: authentication-service
           uri: lb:http://authentication-service
           predicates:
@@ -36,3 +40,7 @@ spring:
           args:
             retries: 3
             methods: GET,POST,PATCH,DELETE
+
+eureka:
+  instance:
+    hostname: localhost

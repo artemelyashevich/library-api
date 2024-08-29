@@ -8,4 +8,6 @@ public interface AuthService {
     AuthResponse register(final AuthRequest request);
 
     AuthResponse login(final AuthRequest request);
+
+    String validate(final String token);
 }
