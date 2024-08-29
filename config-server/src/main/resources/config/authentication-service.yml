@@ -5,6 +5,9 @@ spring:
     password: admin
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: update
     show-sql: true
@@ -12,8 +15,3 @@ spring:
 server:
   port: 8083
 
-application:
-  security:
-    jwt:
-      secret: 984hg493gh0439rthr0429uruj2309yh937gc763fe87t3f89723gf
-      lifetime: 86400000
