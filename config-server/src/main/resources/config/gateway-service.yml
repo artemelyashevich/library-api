@@ -16,6 +16,10 @@ spring:
           uri: lb:http://library-service
           predicates:
             - Path=/api/v1/library/**
+        - id: authentication-service
+          uri: lb:http://authentication-service
+          predicates:
+            - Path=/api/v1/auth/**
       cors-configurations:
         '[/**]':
           allowedOrigins: "*"
