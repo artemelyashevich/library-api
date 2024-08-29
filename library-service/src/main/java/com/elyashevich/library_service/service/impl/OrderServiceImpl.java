@@ -1,6 +1,7 @@
 package com.elyashevich.library_service.service.impl;
 
 import com.elyashevich.library_service.entity.OrderEntity;
+import com.elyashevich.library_service.exception.InvalidOrderDateException;
 import com.elyashevich.library_service.exception.ResourceNotFoundException;
 import com.elyashevich.library_service.repository.OrderRepository;
 import com.elyashevich.library_service.service.OrderService;
@@ -33,18 +34,14 @@ public class OrderServiceImpl implements OrderService {
         return this.orderRepository.findAll();
     }
 
-
-    /*
-    * @Todo: implements error
-    * */
     @Override
     public OrderEntity create(final OrderEntity order) {
         log.debug("Attempting to create a new order: '{}'.", order);
 
         order.setOrderIn(LocalDateTime.now());
         if (order.getExpireIn().isAfter(order.getOrderIn())) {
-            log.warn("");
-            throw new RuntimeException();
+            log.warn("Invalid order date.");
+            throw new InvalidOrderDateException("Invalid order date.");
         }
         var newOrder = this.orderRepository.save(order);
 
@@ -52,8 +49,8 @@ public class OrderServiceImpl implements OrderService {
         return newOrder;
     }
 
-    @Transactional
     @Override
+    @Transactional
     public OrderEntity update(final UUID id, final OrderEntity order) {
         var oldOrder = this.getById(id);
         log.debug("Attempting to update the old order with ID '{}' with the new order: '{}'.", id, order);
@@ -63,8 +60,8 @@ public class OrderServiceImpl implements OrderService {
         return result;
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void delete(final UUID id) {
         var order = this.getById(id);
         log.debug("Attempting to delete the order with ID '{}'.", id);

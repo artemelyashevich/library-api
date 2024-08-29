@@ -41,8 +41,8 @@ public class BookServiceImpl implements BookService {
         return newBook;
     }
 
-    @Transactional
     @Override
+    @Transactional
     public Book update(final UUID id, final Book newBook) {
         var oldBook = this.getById(id);
         log.debug("Attempting to update the old book with ID '{}' with the new book: '{}'.", id, newBook);
@@ -52,8 +52,8 @@ public class BookServiceImpl implements BookService {
         return result;
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void delete(final UUID id) {
         var book = this.getById(id);
         log.debug("Attempting to delete the book with ID '{}'.", id);

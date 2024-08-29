@@ -1,6 +1,7 @@
 package com.elyashevich.library_service.api.controller;
 
 import com.elyashevich.library_service.api.dto.ExceptionBody;
+import com.elyashevich.library_service.exception.InvalidOrderDateException;
 import com.elyashevich.library_service.exception.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class ControllerAdvice {
 
     private static final String NOT_FOUND_MESSAGE = "Not found.";
+    private static final String INVALID_DATE_MASSAGE = "Invalid date.";
     private static final String FAILED_VALIDATION_MESSAGE = "Validation failed.";
     private static final String UNEXPECTED_ERROR_MESSAGE = "Something went wrong.";
 
@@ -27,6 +29,15 @@ public class ControllerAdvice {
     public ExceptionBody notFound(final ResourceNotFoundException exception) {
         var message = exception.getMessage() == null ? NOT_FOUND_MESSAGE : exception.getMessage();
         log.warn("Resource was not found: '{}'.", message);
+
+        return new ExceptionBody(message);
+    }
+
+    @ExceptionHandler(InvalidOrderDateException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionBody invalidDate(final InvalidOrderDateException exception) {
+        var message = exception.getMessage() == null ? INVALID_DATE_MASSAGE : exception.getMessage();
+        log.warn("Invalid date: '{}'.", message);
 
         return new ExceptionBody(message);
     }
