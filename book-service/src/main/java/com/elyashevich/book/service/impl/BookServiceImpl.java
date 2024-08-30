@@ -28,6 +28,12 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public Book getByIsbn(final String isbn) {
+        return this.repository.findByIsbn(isbn)
+                .orElseThrow(() -> new ResourceNotFoundException("No such book with isbn = %s".formatted(isbn)));
+    }
+
+    @Override
     public List<Book> getAll() {
         return this.repository.findAll();
     }

@@ -1,6 +1,8 @@
 package com.elyashevich.book.service.impl;
 
 import com.elyashevich.book.api.dto.OrderDto;
+import com.elyashevich.book.exception.ResourceNotFoundException;
+import com.elyashevich.book.repository.BookRepository;
 import com.elyashevich.book.service.OrderPublisher;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,13 +21,20 @@ public class OrderPublisherImpl implements OrderPublisher {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
 
+    private final BookRepository bookRepository;
+
     @Value("${application.kafka.topic:order}")
     private String topicName;
 
     @Override
     public void sendMessage(final OrderDto orderDto) throws JsonProcessingException {
+        if (!this.bookRepository.existsById(orderDto.bookId())) {
+            throw new ResourceNotFoundException("No such book with id: %s.".formatted(orderDto.bookId()));
+        }
+
         log.debug("Try to send an order message: {}", orderDto);
         var order = serializeToJson(orderDto);
+
         this.kafkaTemplate.send(topicName, order);
 
         log.info("Order '{}' message has been successfully sent.", orderDto);

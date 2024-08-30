@@ -19,6 +19,14 @@ public interface BookService {
     Book getById(final UUID id);
 
     /**
+     * Retrieve a book by its unique isbn.
+     *
+     * @param isbn the unique identifier of the book
+     * @return the book with the specified ID
+     */
+    Book getByIsbn(final String isbn);
+
+    /**
      * Retrieve all books available.
      *
      * @return a list of all books

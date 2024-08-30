@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -74,6 +75,26 @@ public class BookController {
     @GetMapping("/{id}")
     public BookDto getById(@PathVariable("id") final UUID id) {
         var book = this.bookService.getById(id);
+        return this.mapper.toDto(book);
+    }
+
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Get book by isbn",
+                            content = @Content(schema = @Schema(implementation = BookDto.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Book was not found",
+                            content = @Content(schema = @Schema(implementation = ExceptionBody.class))
+                    )
+            }
+    )
+    @GetMapping("/isbn/{isbn}")
+    public BookDto getByIsbn(@PathVariable("isbn") final String isbn) {
+        var book = this.bookService.getByIsbn(isbn);
         return this.mapper.toDto(book);
     }
 

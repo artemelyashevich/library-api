@@ -34,7 +34,7 @@ public class Book {
     @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID id;
 
-    @Column(name = "ISBN")
+    @Column(name = "ISBN", unique = true)
     private String isbn;
 
     @Column
