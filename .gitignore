@@ -36,3 +36,11 @@ build/
 
 ### Mac OS ###
 .DS_Store
+/.idea/
+.idea
+/library-service/.mvn/
+/gateway/.mvn/
+/discovery/.mvn/
+/config-server/.mvn/
+/book-service/.mvn/
+/authentication-service/.mvn/

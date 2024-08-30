@@ -1,10 +1,16 @@
 package com.elyashevich.authentication.service;
 
 import com.elyashevich.authentication.api.dto.AuthRequest;
-import com.elyashevich.authentication.api.dto.AuthResponse;
-import com.elyashevich.authentication.entity.Person;
 
+/**
+ * The PersonService interface defines methods for managing person-related operations.
+ */
 public interface PersonService {
 
-    Person create(AuthRequest authRequest);
+    /**
+     * Creates a new person based on the information provided in the AuthRequest.
+     *
+     * @param authRequest The AuthRequest object containing information for creating a new person.
+     */
+    void create(AuthRequest authRequest);
 }

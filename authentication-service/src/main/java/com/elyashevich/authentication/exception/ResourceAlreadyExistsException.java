@@ -1,17 +1,16 @@
 package com.elyashevich.authentication.exception;
 
 /**
- * Exception to be thrown when a requested resource is not found.
+ * Exception to be thrown when a requested resource is already exists.
  */
-public class ResourceNotFoundException extends RuntimeException {
+public class ResourceAlreadyExistsException extends RuntimeException {
 
     /**
      * Constructs a new ResourceNotFoundException with the specified detail message.
      *
      * @param message the detail message
      */
-    public ResourceNotFoundException(String message) {
+    public ResourceAlreadyExistsException(String message) {
         super(message);
     }
-
 }

@@ -13,7 +13,10 @@ public class RouteValidator {
     private static final List<String> ENDPOINTS = List.of(
             "api/v1/auth/register",
             "api/v1/auth/login",
-            "api/v1/eureka/**"
+            "api/v1/eureka/**",
+            "/v3/api-docs/auth",
+            "/v3/api-docs/books",
+            "/v3/api-docs/library"
     );
 
     private RouteValidator() {

@@ -11,6 +11,13 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  springdoc:
+    packagesToScan: com.elyashevich.authentication
+    api-docs:
+      enabled: true
+      path: /v3/api-docs/auth
+    swagger-ui:
+      path: /v3/api-docs/auth
 
 server:
   port: 8083
