@@ -45,4 +45,13 @@ To run this project, follow these steps:
 6. **Swagger** for API documentation.
 7. **Apache Kafka**.
 
-![alt text](./images/draw.png)
+## Database Schema
+
+![alt text](./images/db.png)
+
+***
+
+## Project Architecture
+
+![alt text](./images/drawio.png)
+    
