@@ -1,0 +1,98 @@
+services:
+
+  db-users:
+    container_name: db-users
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_PASSWORD: admin
+      MYSQL_USER: admin
+      MYSQL_DB: users
+
+  db-books:
+    container_name: db-books
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_PASSWORD: admin
+      MYSQL_USER: admin
+      MYSQL_DB: books
+
+  db-libs:
+    container_name: db-libs
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_PASSWORD: admin
+      MYSQL_USER: admin
+      MYSQL_DB: libs
+
+  config-service:
+    container_name: config-service
+    build:
+      context: ./config-server
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,native
+    ports:
+      - "8888:8888"
+
+  discovery:
+    container_name: discovery-service
+    build:
+      context: ./discovery
+      dockerfile: Dockerfile
+    depends_on:
+      - config-service
+
+  gateway:
+    container_name: gateway
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    depends_on:
+      - config-service
+      - discovery
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8222:8222"
+
+  auth-service:
+    container_name: authentication-service
+    build:
+      context: ./authentication-service
+      dockerfile: Dockerfile
+    depends_on:
+      - config-service
+      - discovery
+      - db-users
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  book-service:
+    container_name: book-service
+    build:
+      context: ./book-service
+      dockerfile: Dockerfile
+    depends_on:
+      - config-service
+      - discovery
+      - db-books
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  library-service:
+    container_name: library-service
+    build:
+      context: ./library-service
+      dockerfile: Dockerfile
+    depends_on:
+      - config-service
+      - discovery
+      - db-libs
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
