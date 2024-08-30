@@ -1,6 +1,6 @@
 # Library Web API
 
-This project involves the development of a CRUD Web API for simulating a library system (including creation, modification, deletion, and retrieval) using the Spring framework.
+This project involves the development of a CRUD Web API for simulating a library system using the Spring framework.
 
 ## Project Setup
 
@@ -9,6 +9,7 @@ To run this project, follow these steps:
 1. Clone the repository.
 2. Configure the database settings in `config-server`.
 3. Build and run the project using Maven or your IDE.
+4. Utilize Docker for containerization and deployment.
 
 ## Main Web API Functionality
 
@@ -37,21 +38,30 @@ To run this project, follow these steps:
 
 ## Technologies Used
 
-1. **Spring Boot**
-2. **ORM**: **Spring Data JPA**.
-3. **RDBMS**: **MySQL**
-4. **MapStruct**.
-5. Authentication via **bearer token**.
-6. **Swagger** for API documentation.
-7. **Apache Kafka**.
+1. **Spring Boot 3**
+2. **Java 17**
+3. **ORM**: **Spring Data JPA**
+4. **RDBMS**: **MySQL** (database per microservice)
+5. **Spring Cloud Config**
+6. **API Gateway**
+7. **Eureka Discovery**
+8. **Apache Kafka** for user notifications on order creation
+9. **OpenAPI Swagger**
+10. **Maven Multi-Module Project**
+11. **Spring Security** for authentication
+12. **MapStruct**
+13. **Docker** for containerization and deployment
 
 ## Database Schema
 
-![alt text](./images/db.png)
-
-***
+![Database Schema](./images/db.png)
 
 ## Project Architecture
 
-![alt text](./images/drawio.png)
-    
+![Project Architecture](./images/drawio.png)
+
+### How to start application?
+```shell
+docker-compose build
+docker-compose up -d
+```
