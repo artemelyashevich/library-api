@@ -11,3 +11,5 @@ application:
     topic: order
     replica: 1
     partition: 1
+  open-api:
+    server: http://127.0.0.1:8082

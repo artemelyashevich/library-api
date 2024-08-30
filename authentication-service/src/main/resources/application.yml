@@ -5,9 +5,6 @@ spring:
     import: optional:configserver:http://127.0.0.1:8888
 
 application:
-  security:
-    jwt:
-      secret: 984hg493gh0439rthr0429uruj2309yh937gc763fe87t3f89723gf
-      lifetime: 86400000
   open-api:
     email: elyashevich.artem06@gmail.com
+    server: http://127.0.0.1:8083

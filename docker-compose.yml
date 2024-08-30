@@ -4,7 +4,7 @@ services:
     container_name: db-users
     image: mysql:latest
     ports:
-      - "3306:3306"
+      - "5111:3306"
     environment:
       MYSQL_PASSWORD: admin
       MYSQL_USER: admin
@@ -14,7 +14,7 @@ services:
     container_name: db-books
     image: mysql:latest
     ports:
-      - "3306:3306"
+      - "5222:3306"
     environment:
       MYSQL_PASSWORD: admin
       MYSQL_USER: admin
@@ -24,7 +24,7 @@ services:
     container_name: db-libs
     image: mysql:latest
     ports:
-      - "3306:3306"
+      - "5333:3306"
     environment:
       MYSQL_PASSWORD: admin
       MYSQL_USER: admin

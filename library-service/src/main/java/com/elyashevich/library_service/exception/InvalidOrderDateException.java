@@ -10,7 +10,7 @@ public class InvalidOrderDateException extends RuntimeException {
      *
      * @param message the detail message
      */
-    public InvalidOrderDateException(String message) {
+    public InvalidOrderDateException(final String message) {
         super(message);
     }
 }

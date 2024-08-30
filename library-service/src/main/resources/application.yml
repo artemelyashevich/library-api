@@ -8,3 +8,5 @@ application:
   kafka:
     bootstrap-servers: 127.0.0.1:9092
     topic-id: main-topic
+  open-api:
+    server: http://127.0.0.1:8081

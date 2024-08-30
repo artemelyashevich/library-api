@@ -30,7 +30,7 @@ public class OrderConsumerImp implements OrderConsumer {
             topics = "order",
             groupId = "main_topic"
     )
-    public void listen(ConsumerRecord<String, String> record) throws JsonProcessingException {
+    public void listen(final ConsumerRecord<String, String> record) throws JsonProcessingException {
         log.debug("Try to get an order message: {}", record.value());
         var dto = deserializeFromJson(record.value());
 
@@ -38,7 +38,7 @@ public class OrderConsumerImp implements OrderConsumer {
         log.info("Order '{}' message has been successfully got.", dto);
     }
 
-    private static OrderDto deserializeFromJson(String json) throws JsonProcessingException {
+    private static OrderDto deserializeFromJson(final String json) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper()
                 .registerModule(
                         new JavaTimeModule()

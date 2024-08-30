@@ -27,13 +27,13 @@ public class CustomAuthenticationFilter extends AbstractGatewayFilterFactory<Cus
     private final WebClient webClient;
 
     @Autowired
-    public CustomAuthenticationFilter(WebClient.Builder webClient) {
+    public CustomAuthenticationFilter(final WebClient.Builder webClient) {
         super(Config.class);
         this.webClient = webClient.build();
     }
 
     @Override
-    public GatewayFilter apply(Config config) {
+    public GatewayFilter apply(final Config config) {
         return (exchange, chain) -> {
             if (!RouteValidator.isSecured.test(exchange.getRequest())) {
                 return chain.filter(exchange);
@@ -54,10 +54,11 @@ public class CustomAuthenticationFilter extends AbstractGatewayFilterFactory<Cus
         };
     }
 
-    /*
-    * @TODO: fix uri
-     */
-    private Mono<Void> validateToken(ServerWebExchange exchange, GatewayFilterChain chain, String token) {
+    private Mono<Void> validateToken(
+            final ServerWebExchange exchange,
+            final GatewayFilterChain chain,
+            final String token
+    ) {
         return this.webClient.post()
                 .uri("http://localhost:8083/api/v1/auth/%s".formatted(token))
                 .retrieve()
@@ -69,7 +70,7 @@ public class CustomAuthenticationFilter extends AbstractGatewayFilterFactory<Cus
                 .flatMap(response -> chain.filter(exchange));
     }
 
-    private Mono<Void> handleInvalidAccess(ServerWebExchange exchange, String errorMessage) {
+    private Mono<Void> handleInvalidAccess(final ServerWebExchange exchange, final String errorMessage) {
         var response = exchange.getResponse();
         response.setStatusCode(HttpStatus.UNAUTHORIZED);
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);

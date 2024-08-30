@@ -27,6 +27,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class PersonServiceImpl implements UserDetailsService, PersonService {
 
+    private static final String ROLE_USER = "ROLE_USER";
+
     private final PersonRepository personRepository;
     private final RoleRepository roleRepository;
 
@@ -34,8 +36,8 @@ public class PersonServiceImpl implements UserDetailsService, PersonService {
     private final PersonConverter personConverter;
 
     @Override
-    @Transactional
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    @Transactional(readOnly = true)
+    public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
         log.debug("Attempting to load user with email: '{}'.", email);
         var person = this.personRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("No such user with email: %s.".formatted(email)));
@@ -50,17 +52,18 @@ public class PersonServiceImpl implements UserDetailsService, PersonService {
 
     @Override
     @Transactional
-    public void create(AuthRequest authRequest) {
+    public void create(final AuthRequest authRequest) {
         log.debug("Attempting to create a new user with email: '{}'.", authRequest.email());
         if (personRepository.existsByEmail(authRequest.email())) {
             throw new ResourceAlreadyExistsException("Such user already exists.");
         }
+
         var person = this.personConverter.convertToPerson(authRequest);
         person.setPassword(
                 this.encoder.encode(authRequest.password())
         );
         person.setRoles(Set.of(
-                this.roleRepository.findByName("ROLE_USER")
+                this.roleRepository.findByName(ROLE_USER)
         ));
 
         log.info("User with email '{}' has been created.", authRequest.email());

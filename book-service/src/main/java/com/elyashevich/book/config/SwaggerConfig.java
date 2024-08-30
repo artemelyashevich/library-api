@@ -16,12 +16,15 @@ public class SwaggerConfig {
     @Value("${application.open-api.email}")
     private String email;
 
+    @Value("${application.open-api.server}")
+    private String serverUrl;
+
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .servers(
                         List.of(
-                                new Server().url("http://localhost:8082")
+                                new Server().url(this.serverUrl)
                         )
                 )
                 .info(

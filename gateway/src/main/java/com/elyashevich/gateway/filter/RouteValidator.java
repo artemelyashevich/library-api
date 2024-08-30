@@ -1,6 +1,5 @@
 package com.elyashevich.gateway.filter;
 
-
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +22,5 @@ public class RouteValidator {
     }
 
     public static final Predicate<ServerHttpRequest> isSecured =
-            request -> ENDPOINTS
-                    .stream()
-                    .noneMatch(uri -> request.getURI().getPath().contains(uri));
+            request -> ENDPOINTS.stream().noneMatch(uri -> request.getURI().getPath().contains(uri));
 }

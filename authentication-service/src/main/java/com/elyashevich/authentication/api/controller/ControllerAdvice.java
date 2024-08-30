@@ -30,8 +30,8 @@ public class ControllerAdvice {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ExceptionBody notFound(final ResourceNotFoundException exception) {
-        var message = exception.getMessage() == null ? NOT_FOUND_MESSAGE : exception.getMessage();
+    public ExceptionBody handleNotFoundException(final ResourceNotFoundException exception) {
+        var message = defineErrorMessage(NOT_FOUND_MESSAGE, exception);
         log.warn("Resource was not found: '{}'.", message);
 
         return new ExceptionBody(message);
@@ -39,8 +39,8 @@ public class ControllerAdvice {
 
     @ExceptionHandler(InvalidTokenException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionBody token(final InvalidTokenException exception) {
-        var message = exception.getMessage() == null ? INVALID_TOKEN_MESSAGE : exception.getMessage();
+    public ExceptionBody handleInvalidTokenException(final InvalidTokenException exception) {
+        var message = defineErrorMessage(INVALID_TOKEN_MESSAGE, exception);
         log.warn("Token exception: '{}'.", message);
 
         return new ExceptionBody(message);
@@ -49,8 +49,8 @@ public class ControllerAdvice {
 
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionBody sql(final SQLIntegrityConstraintViolationException exception) {
-        var message = exception.getMessage() == null ? DUPLICATE_ERROR_MESSAGE : exception.getMessage();
+    public ExceptionBody handleSqlException(final SQLIntegrityConstraintViolationException exception) {
+        var message = defineErrorMessage(DUPLICATE_ERROR_MESSAGE, exception);
         log.warn("Duplicate: '{}'.", message);
 
         return new ExceptionBody(message);
@@ -58,15 +58,15 @@ public class ControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionBody validation(final MethodArgumentNotValidException exception) {
+    public ExceptionBody handleValidation(final MethodArgumentNotValidException exception) {
         var errors = getValidationErrors(exception.getBindingResult());
         return new ExceptionBody(FAILED_VALIDATION_MESSAGE, errors);
     }
 
     @ExceptionHandler(ResourceAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionBody exists(final ResourceAlreadyExistsException exception) {
-        var message = exception.getMessage() == null ? RESOURCE_ALREADY_EXISTS_MESSAGE : exception.getMessage();
+    public ExceptionBody handleAlreadyExists(final ResourceAlreadyExistsException exception) {
+        var message = defineErrorMessage(RESOURCE_ALREADY_EXISTS_MESSAGE, exception);
         log.warn("Already exists: '{}'.", message);
 
         return new ExceptionBody(message);
@@ -74,11 +74,14 @@ public class ControllerAdvice {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ExceptionBody exception(final RuntimeException exception) {
+    public ExceptionBody handleException(final RuntimeException exception) {
         log.error(exception.getMessage(), exception.getCause());
         return new ExceptionBody(UNEXPECTED_ERROR_MESSAGE);
     }
 
+    private static String defineErrorMessage(final String message, final Exception exception) {
+        return exception.getMessage() == null ? message : exception.getMessage();
+    }
 
     /**
      * Retrieves validation errors from a BindingResult and converts them into a Map of field names and error messages.

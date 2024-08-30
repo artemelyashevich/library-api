@@ -13,6 +13,7 @@ import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -34,4 +35,19 @@ public class Role {
 
     @ManyToMany(mappedBy = "roles")
     private Set<Person> persons;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Role role = (Role) o;
+        return Objects.equals(id, role.id)
+                && Objects.equals(name, role.name)
+                && Objects.equals(persons, role.persons);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, persons);
+    }
 }

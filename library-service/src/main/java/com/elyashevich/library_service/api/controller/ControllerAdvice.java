@@ -26,8 +26,8 @@ public class ControllerAdvice {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ExceptionBody notFound(final ResourceNotFoundException exception) {
-        var message = exception.getMessage() == null ? NOT_FOUND_MESSAGE : exception.getMessage();
+    public ExceptionBody handleNotFound(final ResourceNotFoundException exception) {
+        var message = defineMessage(NOT_FOUND_MESSAGE ,exception);
         log.warn("Resource was not found: '{}'.", message);
 
         return new ExceptionBody(message);
@@ -35,8 +35,8 @@ public class ControllerAdvice {
 
     @ExceptionHandler(InvalidOrderDateException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionBody invalidDate(final InvalidOrderDateException exception) {
-        var message = exception.getMessage() == null ? INVALID_DATE_MASSAGE : exception.getMessage();
+    public ExceptionBody handleInvalidDate(final InvalidOrderDateException exception) {
+        var message = defineMessage(INVALID_DATE_MASSAGE ,exception);
         log.warn("Invalid date: '{}'.", message);
 
         return new ExceptionBody(message);
@@ -44,16 +44,20 @@ public class ControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionBody validation(final MethodArgumentNotValidException exception) {
+    public ExceptionBody handleVlidation(final MethodArgumentNotValidException exception) {
         var errors = getValidationErrors(exception.getBindingResult());
         return new ExceptionBody(FAILED_VALIDATION_MESSAGE, errors);
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ExceptionBody exception(final RuntimeException exception) {
+    public ExceptionBody handleException(final RuntimeException exception) {
         log.error(exception.getMessage(), exception.getCause());
         return new ExceptionBody(UNEXPECTED_ERROR_MESSAGE);
+    }
+
+    private static String defineMessage(final String message, final Exception exception) {
+        return exception.getMessage() == null ? message : exception.getMessage();
     }
 
     /**
@@ -67,7 +71,7 @@ public class ControllerAdvice {
      * @return a Map representing the field names and their corresponding error messages
      */
     @SuppressWarnings("all")
-    private static Map<String, String> getValidationErrors(BindingResult bindingResult) {
+    private static Map<String, String> getValidationErrors(final BindingResult bindingResult) {
         return bindingResult
                 .getFieldErrors().stream()
                 .collect(Collectors.toMap(

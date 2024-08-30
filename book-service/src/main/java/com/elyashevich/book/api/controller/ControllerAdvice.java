@@ -24,7 +24,7 @@ public class ControllerAdvice {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ExceptionBody notFound(final ResourceNotFoundException exception) {
+    public ExceptionBody handleNotFound(final ResourceNotFoundException exception) {
         var message = exception.getMessage() == null ? NOT_FOUND_MESSAGE : exception.getMessage();
         log.warn("Resource was not found: '{}'.", message);
 
@@ -33,14 +33,14 @@ public class ControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionBody validation(final MethodArgumentNotValidException exception) {
+    public ExceptionBody handleValidation(final MethodArgumentNotValidException exception) {
         var errors = getValidationErrors(exception.getBindingResult());
         return new ExceptionBody(FAILED_VALIDATION_MESSAGE, errors);
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ExceptionBody exception(final RuntimeException exception) {
+    public ExceptionBody handleException(final RuntimeException exception) {
         log.error(exception.getMessage(), exception.getCause());
         return new ExceptionBody(UNEXPECTED_ERROR_MESSAGE);
     }
@@ -56,7 +56,7 @@ public class ControllerAdvice {
      * @return a Map representing the field names and their corresponding error messages
      */
     @SuppressWarnings("all")
-    private static Map<String, String> getValidationErrors(BindingResult bindingResult) {
+    private static Map<String, String> getValidationErrors(final BindingResult bindingResult) {
         return bindingResult
                 .getFieldErrors().stream()
                 .collect(Collectors.toMap(

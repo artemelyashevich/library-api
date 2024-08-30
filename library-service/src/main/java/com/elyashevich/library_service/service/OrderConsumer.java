@@ -1,6 +1,5 @@
 package com.elyashevich.library_service.service;
 
-import com.elyashevich.library_service.api.dto.OrderDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 

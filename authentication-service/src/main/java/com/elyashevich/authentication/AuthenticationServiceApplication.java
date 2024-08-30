@@ -12,6 +12,9 @@ import org.springframework.context.annotation.Bean;
 @RequiredArgsConstructor
 public class AuthenticationServiceApplication {
 
+	private static final String ROLE_USER = "ROLE_USER";
+	private static final String ROLE_ADMIN = "ROLE_ADMIN";
+
 	private final RoleRepository roleRepository;
 
 	public static void main(String[] args) {
@@ -21,14 +24,14 @@ public class AuthenticationServiceApplication {
 	@Bean
 	public CommandLineRunner CommandLineRunnerBean() {
 		return (args) -> {
-			if (!this.roleRepository.existsByName("ROLE_USER")) {
+			if (!this.roleRepository.existsByName(ROLE_USER)) {
 				var role = new Role();
-				role.setName("ROLE_USER");
+				role.setName(ROLE_USER);
 				this.roleRepository.save(role);
 			}
-			if (!this.roleRepository.existsByName("ROLE_ADMIN")) {
+			if (!this.roleRepository.existsByName(ROLE_ADMIN)) {
 				var role = new Role();
-				role.setName("ROLE_ADMIN");
+				role.setName(ROLE_ADMIN);
 				this.roleRepository.save(role);
 			}
 		};

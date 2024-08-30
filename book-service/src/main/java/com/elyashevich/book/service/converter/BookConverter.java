@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class BookConverter {
 
     @NonNull
-    public Book updateConverter(Book oldBook, Book newBook) {
+    public Book updateConverter(final Book oldBook, final Book newBook) {
         oldBook.setTitle(newBook.getTitle());
         oldBook.setDescription(newBook.getDescription());
         oldBook.setAuthor(newBook.getAuthor());

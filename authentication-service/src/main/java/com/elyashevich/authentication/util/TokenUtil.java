@@ -1,10 +1,13 @@
 package com.elyashevich.authentication.util;
 
 import com.elyashevich.authentication.exception.InvalidTokenException;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwsHeader;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SigningKeyResolverAdapter;
 import io.jsonwebtoken.security.Keys;
 import lombok.experimental.UtilityClass;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +21,7 @@ public class TokenUtil {
 
     private final String secret = "984hg493gh0439rthr0429uruj2309yh937gc763fe87t3f89723gf";
 
-    private final long lifetime = 86400000;
+    private final Long lifetime = 86_400_000L;
 
     /**
      * Extract username claims from the provided token.
@@ -26,7 +29,7 @@ public class TokenUtil {
      * @param token The token from which to extract the username claims.
      * @return The username extracted from the token.
      */
-    public static String extractEmailClaims(String token) {
+    public static String extractEmailClaims(final String token) {
         return getClaimsFromToken(token).getSubject();
     }
 
@@ -36,6 +39,7 @@ public class TokenUtil {
      * @param token The token from which to extract the roles.
      * @return The roles extracted from the token as a List.
      */
+    @SuppressWarnings("unchecked")
     public static List<SimpleGrantedAuthority> getRoles(final String token) {
         return getClaimsFromToken(token).get("roles", List.class);
     }
