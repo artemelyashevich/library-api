@@ -13,6 +13,11 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
 
+    private static final String BOOK_SERVICE_TITLE = "Book service";
+    private static final String BOOK_SERVICE_DESCRIPTION =
+            "This is a sample API documentation for book service using Swagger";
+    public static final String BOOK_SERVICE_VERSION = "1.0";
+
     @Value("${application.open-api.email}")
     private String email;
 
@@ -29,9 +34,9 @@ public class SwaggerConfig {
                 )
                 .info(
                         new Info()
-                                .title("Book service")
-                                .description("This is a sample API documentation for book service using Swagger")
-                                .version("1.0")
+                                .title(BOOK_SERVICE_TITLE)
+                                .description(BOOK_SERVICE_DESCRIPTION)
+                                .version(BOOK_SERVICE_VERSION)
                                 .contact(new Contact().email(this.email))
                 );
     }

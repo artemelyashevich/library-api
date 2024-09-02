@@ -17,6 +17,7 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
     private static final int BEGIN_INDEX = 7;
+    private static final String BEARER_TOKEN_PREFIX = "Bearer ";
 
     @Override
     protected void doFilterInternal(
@@ -27,7 +28,7 @@ public class JwtFilter extends OncePerRequestFilter {
         var header = request.getHeader("Authorization");
         String jwt = null;
         String email = null;
-        if (header != null && header.startsWith("Bearer ")) {
+        if (header != null && header.startsWith(BEARER_TOKEN_PREFIX)) {
             jwt = header.substring(BEGIN_INDEX);
             email = TokenUtil.extractEmailClaims(jwt);
         }

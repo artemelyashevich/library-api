@@ -26,6 +26,13 @@ public interface OrderService {
     List<OrderEntity> getAll();
 
     /**
+     * Retrieve all active orders.
+     *
+     * @return a list of active all orders
+     */
+    List<OrderEntity> getAllActive();
+
+    /**
      * Create a new order.
      *
      * @param order the order to be created

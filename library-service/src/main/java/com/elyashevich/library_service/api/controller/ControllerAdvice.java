@@ -44,7 +44,7 @@ public class ControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionBody handleVlidation(final MethodArgumentNotValidException exception) {
+    public ExceptionBody handleValidation(final MethodArgumentNotValidException exception) {
         var errors = getValidationErrors(exception.getBindingResult());
         return new ExceptionBody(FAILED_VALIDATION_MESSAGE, errors);
     }

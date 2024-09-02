@@ -13,6 +13,10 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
 
+    private static final String AUTHENTICATION_SERVICE_TITLE = "Authentication service";
+    private static final String AUTHENTICATION_SERVICE_DESCRIPTION = "This is a sample API documentation for auth service using Swagger";
+    private static final String AUTHENTICATION_SERVICE_VERSION = "1.0";
+
     @Value("${application.open-api.email}")
     private String email;
 
@@ -29,9 +33,9 @@ public class SwaggerConfig {
                 )
                 .info(
                         new Info()
-                                .title("Authentication service")
-                                .description("This is a sample API documentation for auth service using Swagger")
-                                .version("1.0")
+                                .title(AUTHENTICATION_SERVICE_TITLE)
+                                .description(AUTHENTICATION_SERVICE_DESCRIPTION)
+                                .version(AUTHENTICATION_SERVICE_VERSION)
                                 .contact(new Contact().email(this.email))
                 );
     }

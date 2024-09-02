@@ -13,6 +13,11 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
 
+    private static final String LIBRARY_SERVICE_DESCRIPTION =
+            "This is a sample API documentation for library service using Swagger";
+    private static final String LIBRARY_SERVICE_TITLE = "Library service";
+    public static final String LIBRARY_SERVICE_VERSION = "1.0";
+
     @Value("${application.open-api.email}")
     private String email;
 
@@ -29,9 +34,9 @@ public class SwaggerConfig {
                 )
                 .info(
                         new Info()
-                                .title("Library service")
-                                .description("This is a sample API documentation for library service using Swagger")
-                                .version("1.0")
+                                .title(LIBRARY_SERVICE_TITLE)
+                                .description(LIBRARY_SERVICE_DESCRIPTION)
+                                .version(LIBRARY_SERVICE_VERSION)
                                 .contact(new Contact().email(this.email))
                 );
     }

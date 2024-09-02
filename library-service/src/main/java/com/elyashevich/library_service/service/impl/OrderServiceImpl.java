@@ -35,6 +35,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<OrderEntity> getAllActive() {
+        return this.orderRepository.findAll()
+                .stream()
+                .filter(order -> order.getOrderIn().isBefore(LocalDateTime.now()))
+                .toList();
+    }
+
+    @Override
     public OrderEntity create(final OrderEntity order) {
         log.debug("Attempting to create a new order: '{}'.", order);
 

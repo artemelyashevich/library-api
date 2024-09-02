@@ -22,6 +22,8 @@ import static org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZE
 @Configuration
 public class KafkaConfig {
 
+    private static final String ALLOWED_PACKAGES = "*";
+
     @Value("${application.kafka.topic-id:main-topic}")
     private String topicId = "main_topic";
 
@@ -38,14 +40,14 @@ public class KafkaConfig {
         config.put(GROUP_ID_CONFIG, this.topicId);
         config.put(KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        config.put(TRUSTED_PACKAGES, "*");
+        config.put(TRUSTED_PACKAGES, ALLOWED_PACKAGES);
 
         return new DefaultKafkaConsumerFactory<>(config);
     }
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
-        final ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        var factory = new ConcurrentKafkaListenerContainerFactory<String, String>();
         factory.setConsumerFactory(this.consumerFactory());
         return factory;
     }

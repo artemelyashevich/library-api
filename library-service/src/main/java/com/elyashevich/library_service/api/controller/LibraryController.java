@@ -47,8 +47,9 @@ public class LibraryController {
             }
     )
     @GetMapping
-    public List<OrderEntity> getAll() {
-        return this.orderService.getAll();
+    public List<OrderDto> getAll() {
+        var orders = this.orderService.getAll();
+        return this.orderMapper.toDto(orders);
     }
 
     @ApiResponses(
@@ -132,5 +133,20 @@ public class LibraryController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") final UUID id) {
         this.orderService.delete(id);
+    }
+
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Get all active orders",
+                            content = @Content(schema = @Schema(implementation = List.class))
+                    )
+            }
+    )
+    @GetMapping("/active")
+    public List<OrderDto> getAllActive() {
+        var orders = this.orderService.getAllActive();
+        return this.orderMapper.toDto(orders);
     }
 }
