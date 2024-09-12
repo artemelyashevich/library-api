@@ -34,20 +34,20 @@ public class Book {
     @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID id;
 
-    @Column(name = "ISBN", unique = true)
-    private String isbn;
-
     @Column
     private String title;
-
-    @Column
-    private String genre;
 
     @Column
     private String description;
 
     @Column
+    private String genre;
+
+    @Column
     private String author;
+
+    @Column(name = "ISBN", unique = true)
+    private String isbn;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp

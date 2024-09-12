@@ -1,6 +1,6 @@
 FROM openjdk:17-alpine
 
-ARG JAR=/target/*SNAPSHOT.jar
+ARG JAR=target/*.jar
 
 COPY ${JAR} gateway.jar
 

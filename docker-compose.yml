@@ -1,14 +1,16 @@
-services:
+version: '3'
 
+services:
   db-users:
     container_name: db-users
     image: mysql:latest
     ports:
       - "5111:3306"
     environment:
-      MYSQL_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: admin
       MYSQL_USER: admin
-      MYSQL_DB: users
+      MYSQL_PASSWORD: admin
+      MYSQL_DATABASE: users
 
   db-books:
     container_name: db-books
@@ -16,9 +18,10 @@ services:
     ports:
       - "5222:3306"
     environment:
-      MYSQL_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: admin
       MYSQL_USER: admin
-      MYSQL_DB: books
+      MYSQL_PASSWORD: admin
+      MYSQL_DATABASE: books
 
   db-libs:
     container_name: db-libs
@@ -26,9 +29,10 @@ services:
     ports:
       - "5333:3306"
     environment:
-      MYSQL_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: admin
       MYSQL_USER: admin
-      MYSQL_DB: libs
+      MYSQL_PASSWORD: admin
+      MYSQL_DATABASE: libs
 
   config-service:
     container_name: config-service
@@ -36,7 +40,7 @@ services:
       context: ./config-server
       dockerfile: Dockerfile
     environment:
-      - SPRING_PROFILES_ACTIVE=docker,native
+      SPRING_PROFILES_ACTIVE: docker,native
     ports:
       - "8888:8888"
 
@@ -57,7 +61,7 @@ services:
       - config-service
       - discovery
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
+      SPRING_PROFILES_ACTIVE: docker
     ports:
       - "8222:8222"
 
