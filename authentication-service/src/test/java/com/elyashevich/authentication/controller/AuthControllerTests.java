@@ -1,10 +1,13 @@
-package com.elyashevich.authentication;
+package com.elyashevich.authentication.controller;
 
 import com.elyashevich.authentication.api.dto.AuthRequest;
 import com.elyashevich.authentication.api.dto.AuthResponse;
 import com.elyashevich.authentication.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,17 +16,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import java.util.stream.Stream;
+
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-/**
- * Test class for testing the AuthController.
- */
 @SpringBootTest
 @AutoConfigureMockMvc
-public class AuthControllerTests {
+class AuthControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -39,17 +39,16 @@ public class AuthControllerTests {
      *
      * @throws Exception if an error occurs
      */
-    @Test
-    public void register() throws Exception {
-        var authRequest = getAuthRequestExample();
-        var authResponse = getAuthResponseExample();
-        when(this.authService.register(authRequest)).thenReturn(authResponse);
+    @ParameterizedTest
+    @MethodSource("provideRequestAndResponse")
+    void register(final AuthRequest request, final AuthResponse response) throws Exception {
+        when(this.authService.register(request)).thenReturn(response);
         this.mockMvc.perform(post("/api/v1/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(authRequest)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.token").value(authResponse.token()));
-        verify(this.authService, times(1)).register(authRequest);
+                .andExpect(MockMvcResultMatchers.jsonPath("$.token").value(response.token()));
+        verify(this.authService, times(1)).register(request);
     }
 
     /**
@@ -57,17 +56,16 @@ public class AuthControllerTests {
      *
      * @throws Exception if an error occurs
      */
-    @Test
-    public void login() throws Exception {
-        var authRequest = getAuthRequestExample();
-        var authResponse = getAuthResponseExample();
-        when(this.authService.login(authRequest)).thenReturn(authResponse);
+    @ParameterizedTest
+    @MethodSource("provideRequestAndResponse")
+    void login(final AuthRequest request, final AuthResponse response) throws Exception {
+        when(this.authService.login(request)).thenReturn(response);
         this.mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(authRequest)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.token").value(authResponse.token()));
-        verify(this.authService, times(1)).login(authRequest);
+                .andExpect(MockMvcResultMatchers.jsonPath("$.token").value(response.token()));
+        verify(this.authService, times(1)).login(request);
     }
 
     /**
@@ -76,7 +74,7 @@ public class AuthControllerTests {
      * @throws Exception if an error occurs
      */
     @Test
-    public void validate() throws Exception {
+    void validate() throws Exception {
         var token = "header.payload.signature";
         when(this.authService.validate(token)).thenReturn(token);
         this.mockMvc.perform(post("/api/v1/auth/validate/{token}", token)
@@ -84,16 +82,16 @@ public class AuthControllerTests {
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
 
-    private static AuthRequest getAuthRequestExample() {
-        return new AuthRequest(
+    private static Stream<Arguments> provideRequestAndResponse() {
+        var request = new AuthRequest(
                 "example@example.com",
                 "123456789"
         );
-    }
-
-    private static AuthResponse getAuthResponseExample() {
-        return new AuthResponse(
+        var response = new AuthResponse(
                 "header.payload.signature"
+        );
+        return Stream.of(
+                Arguments.of(request, response)
         );
     }
 }

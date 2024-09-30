@@ -1,4 +1,4 @@
-package com.elyashevich.book;
+package com.elyashevich.book.controller;
 
 import com.elyashevich.book.api.dto.BookDto;
 import com.elyashevich.book.api.mapper.BookMapper;
@@ -6,6 +6,9 @@ import com.elyashevich.book.entity.Book;
 import com.elyashevich.book.service.BookService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,16 +19,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -33,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-public class BookControllerTests {
+class BookControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -52,17 +50,16 @@ public class BookControllerTests {
      *
      * @throws Exception if an error occurs
      */
-    @Test
-    public void testGetAll() throws Exception {
-        var id = UUID.randomUUID();
-        var books = List.of(getBookExample(id));
-        var mockBookDtos = List.of(getBookDtoExample(id));
-        when(this.bookService.getAll()).thenReturn(books);
-        when(this.mapper.toDto(books)).thenReturn(mockBookDtos);
+    @ParameterizedTest
+    @MethodSource("provideBook")
+    void testGetAll(final Book book, final UUID bookId) throws Exception {
+        var mockBookDtos = List.of(getBookDtoExample(bookId));
+        when(this.bookService.getAll()).thenReturn(List.of(book));
+        when(this.mapper.toDto(List.of(book))).thenReturn(mockBookDtos);
         this.mockMvc.perform(get("/api/v1/books"))
                 .andExpect(status().isOk());
         verify(this.bookService, times(1)).getAll();
-        verify(this.mapper, times(1)).toDto(books);
+        verify(this.mapper, times(1)).toDto(List.of(book));
     }
 
     /**
@@ -70,24 +67,22 @@ public class BookControllerTests {
      *
      * @throws Exception if an error occurs
      */
-    @Test
-    public void testGetById() throws Exception {
-        var bookId = UUID.randomUUID();
-        var mockBook = getBookExample(bookId);
-
-        when(this.bookService.getById(bookId)).thenReturn(mockBook);
-        when(this.mapper.toDto(mockBook)).thenReturn(getBookDtoExample(bookId));
+    @ParameterizedTest
+    @MethodSource("provideBook")
+    void testGetById(final Book book, final UUID bookId) throws Exception {
+        when(this.bookService.getById(bookId)).thenReturn(book);
+        when(this.mapper.toDto(book)).thenReturn(getBookDtoExample(bookId));
 
         this.mockMvc.perform(get("/api/v1/books/{id}", bookId))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(bookId.toString()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(mockBook.getTitle()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.description").value(mockBook.getDescription()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.genre").value(mockBook.getGenre()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.author").value(mockBook.getAuthor()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.isbn").value(mockBook.getIsbn()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(book.getTitle()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description").value(book.getDescription()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.genre").value(book.getGenre()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.author").value(book.getAuthor()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.isbn").value(book.getIsbn()));
         verify(this.bookService, times(1)).getById(bookId);
-        verify(this.mapper, times(1)).toDto(mockBook);
+        verify(this.mapper, times(1)).toDto(book);
     }
 
     /**
@@ -95,24 +90,22 @@ public class BookControllerTests {
      *
      * @throws Exception if an error occurs
      */
-    @Test
-    public void testGetByIsbn() throws Exception {
+    @ParameterizedTest
+    @MethodSource("provideBook")
+    void testGetByIsbn(final Book book, final UUID bookId) throws Exception {
         var isbn = "123-1234567890";
-        var bookId = UUID.randomUUID();
-        var mockBook = getBookExample(bookId);
-
-        when(this.bookService.getByIsbn(isbn)).thenReturn(mockBook);
-        when(this.mapper.toDto(mockBook)).thenReturn(getBookDtoExample(bookId));
+        when(this.bookService.getByIsbn(isbn)).thenReturn(book);
+        when(this.mapper.toDto(book)).thenReturn(getBookDtoExample(bookId));
         this.mockMvc.perform(get("/api/v1/books/isbn/{isbn}", isbn))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(bookId.toString()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(mockBook.getTitle()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.description").value(mockBook.getDescription()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.genre").value(mockBook.getGenre()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.author").value(mockBook.getAuthor()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(book.getTitle()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description").value(book.getDescription()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.genre").value(book.getGenre()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.author").value(book.getAuthor()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.isbn").value(isbn));
         verify(this.bookService, times(1)).getByIsbn(isbn);
-        verify(this.mapper, times(1)).toDto(mockBook);
+        verify(this.mapper, times(1)).toDto(book);
     }
 
     /**
@@ -120,27 +113,26 @@ public class BookControllerTests {
      *
      * @throws Exception if an error occurs
      */
-    @Test
-    public void testCreate() throws Exception {
-        var bookId = UUID.randomUUID();
-        var mockBook = getBookExample(bookId);
+    @ParameterizedTest
+    @MethodSource("provideBook")
+    void testCreate(final Book book, final UUID bookId) throws Exception {
         var bookDto = getBookDtoExample(bookId);
 
-        when(this.mapper.toEntity(bookDto)).thenReturn(mockBook);
-        when(this.bookService.create(any(Book.class))).thenReturn(mockBook);
-        when(this.mapper.toDto(mockBook)).thenReturn(bookDto);
+        when(this.mapper.toEntity(bookDto)).thenReturn(book);
+        when(this.bookService.create(any(Book.class))).thenReturn(book);
+        when(this.mapper.toDto(book)).thenReturn(bookDto);
         this.mockMvc.perform(post("/api/v1/books")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(bookDto)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(bookId.toString()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(mockBook.getTitle()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.description").value(mockBook.getDescription()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.genre").value(mockBook.getGenre()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.author").value(mockBook.getAuthor()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.isbn").value(mockBook.getIsbn()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(book.getTitle()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description").value(book.getDescription()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.genre").value(book.getGenre()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.author").value(book.getAuthor()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.isbn").value(book.getIsbn()));
         verify(this.bookService, times(1)).create(any(Book.class));
-        verify(this.mapper, times(1)).toDto(mockBook);
+        verify(this.mapper, times(1)).toDto(book);
         verify(this.mapper, times(1)).toEntity(bookDto);
     }
 
@@ -150,7 +142,7 @@ public class BookControllerTests {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testUpdate() throws Exception {
+    void testUpdate() throws Exception {
         var bookId = UUID.randomUUID();
         var bookDto = getUpdatedBookDto();
         var mockBook = getUpdatedBook(bookId);
@@ -179,7 +171,7 @@ public class BookControllerTests {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testDelete() throws Exception {
+    void testDelete() throws Exception {
         var bookId = UUID.randomUUID();
 
         doNothing().when(this.bookService).delete(any(UUID.class));
@@ -189,9 +181,10 @@ public class BookControllerTests {
         verify(this.bookService, times(1)).delete(any(UUID.class));
     }
 
-    private static Book getBookExample(final UUID id) {
-        return new Book(
-                id,
+    private static Stream<Arguments> provideBook() {
+        var bookId = UUID.randomUUID();
+        var book = new Book(
+                bookId,
                 "Title",
                 "Description",
                 "Genre",
@@ -199,6 +192,9 @@ public class BookControllerTests {
                 "123-1234567890",
                 null,
                 null
+        );
+        return Stream.of(
+                Arguments.of(book, bookId)
         );
     }
 

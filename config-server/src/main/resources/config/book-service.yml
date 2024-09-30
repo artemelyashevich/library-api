@@ -1,15 +1,15 @@
 spring:
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/books
+    url: jdbc:mysql://127.0.0.1:3306/db
     username: admin
     password: admin
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
-    hibernate:
-      ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL5Dialect
+        dialect: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
     show-sql: true
   kafka:
     producer:
@@ -20,4 +20,4 @@ server:
 
 application:
   open-api:
-    email:
+    email: elyashevich.artem06@gmail.com

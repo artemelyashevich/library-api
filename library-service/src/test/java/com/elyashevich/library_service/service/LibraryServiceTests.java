@@ -1,4 +1,4 @@
-package com.elyashevich.library_service;
+package com.elyashevich.library_service.service;
 
 import com.elyashevich.library_service.entity.OrderEntity;
 import com.elyashevich.library_service.exception.ResourceNotFoundException;
@@ -6,16 +6,19 @@ import com.elyashevich.library_service.repository.OrderRepository;
 import com.elyashevich.library_service.service.converter.OrderConverter;
 import com.elyashevich.library_service.service.impl.OrderServiceImpl;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -23,8 +26,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test class for testing the LibraryService.
  */
-@SpringBootTest
-@AutoConfigureMockMvc
+@ExtendWith(MockitoExtension.class)
 public class LibraryServiceTests {
 
     @InjectMocks
@@ -39,17 +41,15 @@ public class LibraryServiceTests {
     /**
      * Test case for testing the getById method with an existing order.
      */
-    @Test
-    public void testGetById_ExistingBook() {
-        var orderId = UUID.randomUUID();
-        var dummyOrder = getOrderExample(orderId);
-
-        when(this.repository.findById(orderId)).thenReturn(Optional.of(dummyOrder));
-
+    @ParameterizedTest
+    @MethodSource("provideOrder")
+    public void testGetById_ExistingBook(final OrderEntity order, final UUID orderId) {
+        // Act
+        when(this.repository.findById(orderId)).thenReturn(Optional.of(order));
         var foundOrder = this.orderService.getById(orderId);
 
-        assertEquals(dummyOrder, foundOrder);
-
+        // Assert
+        assertEquals(order, foundOrder);
         verify(this.repository, times(1)).findById(orderId);
     }
 
@@ -64,64 +64,65 @@ public class LibraryServiceTests {
     /**
      * Test case for testing the getAll method.
      */
-    @Test
-    public void testGetAll() {
+    @ParameterizedTest
+    @MethodSource("provideOrder")
+    public void testGetAll(final OrderEntity order, final UUID orderId) {
+        // Act
         var dummyOrders = List.of(
-                getOrderExample(UUID.randomUUID())
+                order
         );
-
         when(this.repository.findAll()).thenReturn(dummyOrders);
-
         var foundOrders = this.orderService.getAll();
 
-        assertEquals(dummyOrders.size(), foundOrders.size());
-        assertIterableEquals(dummyOrders, foundOrders);
-
+        // Assert
+        assertAll(
+                () -> assertEquals(dummyOrders.size(), foundOrders.size()),
+                () -> assertIterableEquals(dummyOrders, foundOrders)
+        );
         verify(this.repository, times(1)).findAll();
     }
 
     /**
      * Test case for testing the create method.
      */
-    @Test
-    public void testCreate() {
-        var orderId = UUID.randomUUID();
-        var orderToCreate = getOrderExample(orderId);
-        var createdOrder= getOrderExample(orderId);
+    @ParameterizedTest
+    @MethodSource("provideOrder")
+    public void testCreate(final OrderEntity order, final UUID orderId) {
+        // Act
+        when(this.repository.save(order)).thenReturn(order);
+        var result = this.orderService.create(order);
 
-        when(this.repository.save(orderToCreate)).thenReturn(createdOrder);
-
-        var result = this.orderService.create(orderToCreate);
-
-        assertEquals(createdOrder, result);
-
-        verify(this.repository, times(1)).save(orderToCreate);
+        // Assert
+        assertEquals(order, result);
+        verify(this.repository, times(1)).save(order);
     }
 
     /**
      * Test case for testing the delete method.
      */
-    @Test
-    @Transactional
-    public void testDelete() {
-        var orderId = UUID.randomUUID();
-        var orderToDelete = getOrderExample(orderId);
-
-        when(this.repository.findById(orderId)).thenReturn(Optional.of(orderToDelete));
-
+    @ParameterizedTest
+    @MethodSource("provideOrder")
+    public void testDelete(final OrderEntity order, final UUID orderId) {
+        // Act
+        when(this.repository.findById(orderId)).thenReturn(Optional.of(order));
         this.orderService.delete(orderId);
 
-        verify(this.repository, times(1)).delete(orderToDelete);
+        // Assert
+        verify(this.repository, times(1)).delete(order);
     }
 
-    private OrderEntity getOrderExample(final UUID orderId) {
-        return new OrderEntity(
+    private static Stream<Arguments> provideOrder() {
+        var orderId = UUID.randomUUID();
+        var order = new OrderEntity(
                 orderId,
                 UUID.randomUUID(),
                 LocalDateTime.now(),
                 LocalDateTime.now().plusDays(1L),
                 null,
                 null
+        );
+        return Stream.of(
+                Arguments.of(order, orderId)
         );
     }
 }

@@ -1,4 +1,4 @@
-package com.elyashevich.library_service;
+package com.elyashevich.library_service.controller;
 
 import com.elyashevich.library_service.api.dto.OrderDto;
 import com.elyashevich.library_service.api.mapper.OrderMapper;

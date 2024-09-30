@@ -1,8 +1,6 @@
-version: '3'
-
 services:
-  db-users:
-    container_name: db-users
+  db-shared:
+    container_name: db
     image: mysql:latest
     ports:
       - "5111:3306"
@@ -10,29 +8,7 @@ services:
       MYSQL_ROOT_PASSWORD: admin
       MYSQL_USER: admin
       MYSQL_PASSWORD: admin
-      MYSQL_DATABASE: users
-
-  db-books:
-    container_name: db-books
-    image: mysql:latest
-    ports:
-      - "5222:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: admin
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: admin
-      MYSQL_DATABASE: books
-
-  db-libs:
-    container_name: db-libs
-    image: mysql:latest
-    ports:
-      - "5333:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: admin
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: admin
-      MYSQL_DATABASE: libs
+      MYSQL_DATABASE: db
 
   config-service:
     container_name: config-service
@@ -44,7 +20,7 @@ services:
     ports:
       - "8888:8888"
 
-  discovery:
+  discovery-service:
     container_name: discovery-service
     build:
       context: ./discovery
@@ -61,7 +37,7 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - config-service
-      - discovery
+      - discovery-service
     environment:
       SPRING_PROFILES_ACTIVE: docker
     ports:
@@ -74,13 +50,15 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - config-service
-      - discovery
-      - db-users
+      - discovery-service
+      - db-shared
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:mysql://users
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-shared:3306/db
       SPRING_DATASOURCE_USERNAME: admin
       SPRING_DATASOURCE_PASSWORD: admin
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQL8Dialect
+      APPLICATION_OPEN_API_EMAIL: elyashevich.artem06@gmail.com
     ports:
       - "8083:8083"
 
@@ -91,13 +69,16 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - config-service
-      - discovery
-      - db-books
+      - discovery-service
+      - db-shared
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:mysql://books
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-shared:3306/db
       SPRING_DATASOURCE_USERNAME: admin
       SPRING_DATASOURCE_PASSWORD: admin
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQL8Dialect
+      SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS: kafka:9092
+      APPLICATION_OPEN_API_EMAIL: elyashevich.artem06@gmail.com
     ports:
       - "8082:8082"
 
@@ -108,12 +89,34 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - config-service
-      - discovery
-      - db-libs
+      - discovery-service
+      - db-shared
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:mysql://libs
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-shared:3306/db
       SPRING_DATASOURCE_USERNAME: admin
       SPRING_DATASOURCE_PASSWORD: admin
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQL8Dialect
+      SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS: kafka:9092
+      APPLICATION_OPEN_API_EMAIL: elyashevich.artem06@gmail.com
     ports:
       - "8081:8081"
+
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9093,OUTSIDE://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_LISTENERS: INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CREATE_TOPICS: "topic1:1:1"
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"

@@ -1,4 +1,4 @@
-package com.elyashevich.authentication;
+package com.elyashevich.authentication.service;
 
 import com.elyashevich.authentication.api.dto.AuthRequest;
 import com.elyashevich.authentication.entity.Person;
@@ -6,10 +6,10 @@ import com.elyashevich.authentication.entity.Role;
 import com.elyashevich.authentication.service.impl.AuthServiceImpl;
 import com.elyashevich.authentication.service.impl.PersonServiceImpl;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +24,8 @@ import static org.mockito.Mockito.when;
 /**
  * Test class for testing the PersonService.
  */
-@SpringBootTest
-@AutoConfigureMockMvc
-public class AuthServiceTests {
+@ExtendWith(MockitoExtension.class)
+ class AuthServiceTests {
 
     @InjectMocks
     private AuthServiceImpl authService;
@@ -39,7 +38,8 @@ public class AuthServiceTests {
      */
     @Test
     @Transactional
-    public void register() {
+     void register() {
+        // Setting up test data
         var request = getAuthRequestExample();
         when(personService.loadUserByUsername(request.email())).thenReturn(
                 new User(
@@ -48,7 +48,9 @@ public class AuthServiceTests {
                         getMappedRolesToSimpleGrantedAuthority(getPersonExample(request.email()).getRoles())
                 )
         );
+
         var response = authService.register(request);
+
         assertNotNull(response);
         assertNotNull(response.token());
     }
@@ -58,7 +60,7 @@ public class AuthServiceTests {
      */
     @Test
     @Transactional
-    public void login() {
+     void login() {
         var request = getAuthRequestExample();
         when(personService.loadUserByUsername(request.email())).thenReturn(
                 new User(
@@ -67,7 +69,9 @@ public class AuthServiceTests {
                         getMappedRolesToSimpleGrantedAuthority(getPersonExample(request.email()).getRoles())
                 )
         );
+
         var response = authService.login(request);
+
         assertNotNull(response);
         assertNotNull(response.token());
     }

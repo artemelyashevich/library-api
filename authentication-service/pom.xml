@@ -23,6 +23,7 @@
         <jwt.version>0.11.5</jwt.version>
         <map-struct.version>1.5.5.Final</map-struct.version>
         <spring-doc.version>2.0.2</spring-doc.version>
+        <h2-version>2.1.214</h2-version>
     </properties>
 
     <dependencies>
@@ -121,6 +122,18 @@
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct-processor</artifactId>
             <version>${map-struct.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2-version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
     </dependencies>

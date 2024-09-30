@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: authentication-service
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create-drop
+  sql.init.mode: always
+  config:
+    import: optional:configserver:http://127.0.0.1:8888
+application:
+  open-api:
+    email: elyashevich.artem06@gmail.com
+    server: http://127.0.0.1:8083

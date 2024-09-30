@@ -2,17 +2,14 @@ package com.elyashevich.library_service.api.controller;
 
 import com.elyashevich.library_service.api.dto.ExceptionBody;
 import com.elyashevich.library_service.api.dto.OrderDto;
-import com.elyashevich.library_service.api.mapper.OrderMapper;
 import com.elyashevich.library_service.api.validation.OnCreate;
 import com.elyashevich.library_service.api.validation.OnUpdate;
 import com.elyashevich.library_service.entity.OrderEntity;
-import com.elyashevich.library_service.service.OrderService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,19 +20,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
 
-@RestController
 @RequestMapping("/api/v1/library")
-@RequiredArgsConstructor
 @Tag(name = "Book Controller", description = "APIs for book service")
-public class LibraryController {
-
-    private final OrderService orderService;
-    private final OrderMapper orderMapper;
+public interface LibraryController {
 
     @ApiResponses(
             value = {
@@ -47,10 +38,7 @@ public class LibraryController {
             }
     )
     @GetMapping
-    public List<OrderDto> getAll() {
-        var orders = this.orderService.getAll();
-        return this.orderMapper.toDto(orders);
-    }
+    List<OrderDto> getAll();
 
     @ApiResponses(
             value = {
@@ -68,10 +56,7 @@ public class LibraryController {
     )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderDto create(@Validated(OnCreate.class) @RequestBody final OrderDto dto) {
-        var order = this.orderService.create(this.orderMapper.toEntity(dto));
-        return this.orderMapper.toDto(order);
-    }
+    OrderDto create(@Validated(OnCreate.class) @RequestBody final OrderDto dto);
 
     @ApiResponses(
             value = {
@@ -88,9 +73,7 @@ public class LibraryController {
             }
     )
     @GetMapping("/{id}")
-    public OrderEntity getById(@PathVariable("id") final UUID id) {
-        return this.orderService.getById(id);
-    }
+    OrderEntity getById(@PathVariable("id") final UUID id);
 
     @ApiResponses(
             value = {
@@ -107,13 +90,10 @@ public class LibraryController {
             }
     )
     @PatchMapping("/{id}")
-    public OrderEntity update(
+    OrderEntity update(
             @PathVariable("id") final UUID id,
             @Validated(OnUpdate.class) @RequestBody final OrderDto dto
-    ) {
-        return this.orderService.update(id, this.orderMapper.toEntity(dto));
-    }
-
+    );
 
     @ApiResponses(
             value = {
@@ -131,9 +111,7 @@ public class LibraryController {
     )
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable("id") final UUID id) {
-        this.orderService.delete(id);
-    }
+    void delete(@PathVariable("id") final UUID id);
 
     @ApiResponses(
             value = {
@@ -145,8 +123,5 @@ public class LibraryController {
             }
     )
     @GetMapping("/active")
-    public List<OrderDto> getAllActive() {
-        var orders = this.orderService.getAllActive();
-        return this.orderMapper.toDto(orders);
-    }
+    List<OrderDto> getAllActive();
 }
