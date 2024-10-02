@@ -9,7 +9,6 @@ To run this project, follow these steps:
 1. Clone the repository.
 2. Configure the database settings in `config-server`.
 3. Build and run the project using Maven or your IDE.
-4. Utilize Docker for containerization and deployment.
 
 ## Main Web API Functionality
 
@@ -62,6 +61,5 @@ To run this project, follow these steps:
 
 ### How to start application?
 ```shell
-docker-compose build
-docker-compose up -d
+git clone 
 ```
