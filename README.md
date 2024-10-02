@@ -60,6 +60,125 @@ To run this project, follow these steps:
 ![Project Architecture](./images/drawio.png)
 
 ### How to start application?
+
+1) Clone project
+```
+git clone https://github.com/artemelyashevich/library-api.git
+```
+2) Start kafka (from kafka directory in your pc)
 ```shell
-git clone 
+.\bin\windows\kafka-server-start.bat .\config\server.propertie
+.\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
+```
+3) Start Config Server
+```shell
+cd .\config-server\
+mvn spring-boot:run
+```
+4) Start Discovery Service
+```shell
+cd .\discovery\
+mvn spring-boot:run
+```
+5) Start Gateway Service
+```shell
+cd .\gateway\
+mvn spring-boot:run
+```
+6) Start Book Service
+```shell
+cd .\book-service\
+mvn spring-boot:run
+```
+7) Start Library Service
+```shell
+cd .\library-service\
+mvn spring-boot:run
+```
+8) Start Auth Service
+```shell
+cd .\authentication-service\
+mvn spring-boot:run
+```
+### Http Requests Examples
+
+```http
+   ### Expext code 201 & auth token 
+   POST http://localhost:8222/api/v1/auth/register
+   Content-Type: application/json
+   {
+      "email": "example@example.com",
+      "password": "password12345"
+   }
+   
+   ### Expext code 201 & auth token 
+   POST http://localhost:8222/api/v1/auth/login
+   Content-Type: application/json
+   {
+      "email": "example@example.com",
+      "password": "password12345"
+   }
+   
+   ### Expext code 200 & auth token 
+   POST http://localhost:8222/api/v1/auth/{token}
+   
+   ### Expect code 200 & list of books
+   GET http://localhost:8222/api/v1/books
+
+   ### Expect code 200 & book (if exists)
+   GET http://localhost:8222/api/v1/books/{bookId}
+   
+   ### Expect code 201 & book
+   POST http://localhost:8222/api/v1/books
+   {
+      "title": "The Great Gatsby",
+      "description": "A story of the Jazz Age",
+      "genre": "Classic",
+      "author": "F. Scott Fitzgerald",
+      "isbn": "111-1111111111"
+   }
+   
+   ### Expect code 200 & book
+   PATCH http://localhost:8222/api/v1/books/{bookId}
+   {
+      "title": "The Great Gatsby",
+      "description": "A story of the Jazz Age",
+      "genre": "Classic",
+      "author": "F. Scott Fitzgerald",
+      "isbn": "111-1111111111"
+   }
+   
+   ### Expect code 204 if book exists
+   DELETE http://localhost:8222/api/v1/books/{bookId}
+   
+   ### Expect code 202
+   POST http://localhost:8222/api/v1/books/order
+   
+   ### Expect code 200 & list of orders
+   GET http://localhost:8222/api/v1/library/active
+   
+   ### Expect code 200 & list of not expired orders
+   GET http://localhost:8222/api/v1/library/active
+
+   ### Expect code 200 & order (if exists)
+   GET http://localhost:8222/api/v1/library/{orderId}
+   
+   ### Expect code 201 & book
+   POST http://localhost:8222/api/v1/library
+   {
+        "bookId": "bookId-example",
+        "expireIn": "",
+        "orderIn": "",
+   }
+   
+   ### Expect code 200 & order
+   PATCH http://localhost:8222/api/v1/library/{orderId}
+   {
+        "bookId": "bookId-example",
+        "expireIn": "",
+        "orderIn": "",
+   }
+   
+   ### Expect code 204 if order exists
+   DELETE http://localhost:8222/api/v1/library/{orderId}
 ```
