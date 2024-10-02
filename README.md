@@ -67,7 +67,7 @@ git clone https://github.com/artemelyashevich/library-api.git
 ```
 2) Start kafka (from kafka directory in your pc)
 ```shell
-.\bin\windows\kafka-server-start.bat .\config\server.propertie
+.\bin\windows\kafka-server-start.bat ..\..\config\server.propertie
 .\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
 ```
 3) Start Config Server

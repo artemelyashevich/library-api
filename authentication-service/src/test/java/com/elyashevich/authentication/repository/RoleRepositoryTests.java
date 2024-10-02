@@ -36,7 +36,6 @@ class RoleRepositoryTests {
     @MethodSource("provideRole")
     void roleRepository_FindByName(final Role role, final String name) {
         // Act
-        this.roleRepository.save(role);
         var newRole = this.roleRepository.findByName(name);
 
         // Assert
