@@ -81,6 +81,6 @@ public interface AuthController {
                     )
             }
     )
-    @PostMapping("{token}")
+    @PostMapping("/{token}")
     String validate(@PathVariable String token);
 }

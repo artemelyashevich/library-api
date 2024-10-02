@@ -23,9 +23,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-/**
- * Test class for testing the LibraryService.
- */
+
 @ExtendWith(MockitoExtension.class)
 public class LibraryServiceTests {
 
@@ -38,9 +36,6 @@ public class LibraryServiceTests {
     @Mock
     private OrderConverter converter;
 
-    /**
-     * Test case for testing the getById method with an existing order.
-     */
     @ParameterizedTest
     @MethodSource("provideOrder")
     public void testGetById_ExistingBook(final OrderEntity order, final UUID orderId) {
@@ -53,17 +48,11 @@ public class LibraryServiceTests {
         verify(this.repository, times(1)).findById(orderId);
     }
 
-    /**
-     * Test case for testing the getById method when it throws a ResourceNotFoundException.
-     */
     @Test
     public void testGetById_throwsException() {
         assertThrows(ResourceNotFoundException.class, () -> this.orderService.getById(UUID.randomUUID()));
     }
 
-    /**
-     * Test case for testing the getAll method.
-     */
     @ParameterizedTest
     @MethodSource("provideOrder")
     public void testGetAll(final OrderEntity order, final UUID orderId) {
@@ -82,9 +71,6 @@ public class LibraryServiceTests {
         verify(this.repository, times(1)).findAll();
     }
 
-    /**
-     * Test case for testing the create method.
-     */
     @ParameterizedTest
     @MethodSource("provideOrder")
     public void testCreate(final OrderEntity order, final UUID orderId) {
@@ -97,9 +83,6 @@ public class LibraryServiceTests {
         verify(this.repository, times(1)).save(order);
     }
 
-    /**
-     * Test case for testing the delete method.
-     */
     @ParameterizedTest
     @MethodSource("provideOrder")
     public void testDelete(final OrderEntity order, final UUID orderId) {

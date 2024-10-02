@@ -33,9 +33,6 @@ import static org.mockito.Mockito.when;
     @Mock
     private PersonServiceImpl personService;
 
-    /**
-     * Test case for testing the register method.
-     */
     @Test
     @Transactional
      void register() {
@@ -55,9 +52,6 @@ import static org.mockito.Mockito.when;
         assertNotNull(response.token());
     }
 
-    /**
-     * Test case for testing the login method.
-     */
     @Test
     @Transactional
      void login() {

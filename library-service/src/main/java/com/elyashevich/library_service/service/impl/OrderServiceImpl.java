@@ -38,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderEntity> getAllActive() {
         return this.orderRepository.findAll()
                 .stream()
-                .filter(order -> order.getOrderIn().isBefore(LocalDateTime.now()))
+                .filter(order -> order.getExpireIn().isAfter(LocalDateTime.now()))
                 .toList();
     }
 
@@ -47,7 +47,7 @@ public class OrderServiceImpl implements OrderService {
         log.debug("Attempting to create a new order: '{}'.", order);
 
         order.setOrderIn(LocalDateTime.now());
-        if (order.getExpireIn().isAfter(order.getOrderIn())) {
+        if (order.getExpireIn().isBefore(order.getOrderIn())) {
             log.warn("Invalid order date.");
             throw new InvalidOrderDateException("Invalid order date.");
         }

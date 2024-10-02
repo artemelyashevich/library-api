@@ -35,9 +35,6 @@ class PersonServiceTests {
     @Mock
     private PersonRepository repository;
 
-    /**
-     * Test case for testing the loadByUsername method with an existing person.
-     */
     @ParameterizedTest
     @MethodSource("providePerson")
     void personService_LoadByUsername(final Person person, final String email) {
@@ -51,9 +48,6 @@ class PersonServiceTests {
         assertEquals(person.getEmail(), actualPerson.getUsername());
     }
 
-    /**
-     * Test case for testing the loadByUsername method when it throws a ResourceNotFoundException.
-     */
     @ParameterizedTest
     @EmptySource
     void personService_LoadUserByUsername_throwsException(final String email) {

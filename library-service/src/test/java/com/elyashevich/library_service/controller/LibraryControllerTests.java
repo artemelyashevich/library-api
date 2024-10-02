@@ -1,15 +1,18 @@
 package com.elyashevich.library_service.controller;
 
+import com.elyashevich.library_service.api.controller.impl.LibraryControllerImpl;
 import com.elyashevich.library_service.api.dto.OrderDto;
 import com.elyashevich.library_service.api.mapper.OrderMapper;
 import com.elyashevich.library_service.entity.OrderEntity;
 import com.elyashevich.library_service.service.OrderService;
+import com.elyashevich.library_service.service.impl.OrderServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -22,17 +25,16 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * Test class for testing the LibraryController.
- */
-@SpringBootTest
-@AutoConfigureMockMvc
-public class LibraryControllerTests {
+
+@WebMvcTest(LibraryControllerImpl.class)
+@MockBean(JpaMetamodelMappingContext.class)
+@AutoConfigureWebMvc
+class LibraryControllerTests {
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private OrderService orderService;
+    private OrderServiceImpl orderService;
 
     @MockBean
     private OrderMapper mapper;
@@ -40,13 +42,8 @@ public class LibraryControllerTests {
     @Autowired
     private ObjectMapper objectMapper;
 
-    /**
-     * Test case for testing the getAll method.
-     *
-     * @throws Exception if an error occurs
-     */
     @Test
-    public void testGetAll() throws Exception {
+    void testGetAll() throws Exception {
         var id = UUID.randomUUID();
         var orders = List.of(getOrderExample(id));
         var mockOrderDtos = List.of(getOrderDtoExample(id));
@@ -58,13 +55,8 @@ public class LibraryControllerTests {
         verify(this.mapper, times(1)).toDto(orders);
     }
 
-    /**
-     * Test case for testing the getById method.
-     *
-     * @throws Exception if an error occurs
-     */
     @Test
-    public void testGetById() throws Exception {
+    void testGetById() throws Exception {
         var orderId = UUID.randomUUID();
         var mockOrder = getOrderExample(orderId);
 
@@ -79,13 +71,8 @@ public class LibraryControllerTests {
         verify(this.orderService, times(1)).getById(orderId);
     }
 
-    /**
-     * Test case for testing the create method.
-     *
-     * @throws Exception if an error occurs
-     */
     @Test
-    public void testCreate() throws Exception {
+    void testCreate() throws Exception {
         var orderId = UUID.randomUUID();
         var bookId = UUID.randomUUID();
         var orderIn = LocalDateTime.now();
@@ -120,13 +107,8 @@ public class LibraryControllerTests {
         verify(this.mapper, times(1)).toEntity(orderDto);
     }
 
-    /**
-     * Test case for testing the update method.
-     *
-     * @throws Exception if an error occurs
-     */
     @Test
-    public void testUpdate() throws Exception {
+    void testUpdate() throws Exception {
         var orderId = UUID.randomUUID();
         var bookId = UUID.randomUUID();
         var orderIn = LocalDateTime.now();
@@ -161,13 +143,8 @@ public class LibraryControllerTests {
         verify(this.orderService, times(1)).update(bookId, mockOrder);
     }
 
-    /**
-     * Test case for testing the delete method.
-     *
-     * @throws Exception if an error occurs
-     */
     @Test
-    public void testDelete() throws Exception {
+    void testDelete() throws Exception {
         var orderId = UUID.randomUUID();
 
         doNothing().when(this.orderService).delete(any(UUID.class));

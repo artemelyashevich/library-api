@@ -1,17 +1,18 @@
 package com.elyashevich.book.controller;
 
+import com.elyashevich.book.api.controller.impl.BookControllerImpl;
 import com.elyashevich.book.api.dto.BookDto;
 import com.elyashevich.book.api.mapper.BookMapper;
 import com.elyashevich.book.entity.Book;
 import com.elyashevich.book.service.BookService;
+import com.elyashevich.book.service.impl.OrderPublisherImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,8 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Test class for testing the BookController.
  */
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(BookControllerImpl.class)
 class BookControllerTests {
 
     @Autowired
@@ -40,16 +40,14 @@ class BookControllerTests {
     private BookService bookService;
 
     @MockBean
+    private OrderPublisherImpl publisher;
+
+    @MockBean
     private BookMapper mapper;
 
     @Autowired
     private ObjectMapper objectMapper;
 
-    /**
-     * Test case for testing the getAll method.
-     *
-     * @throws Exception if an error occurs
-     */
     @ParameterizedTest
     @MethodSource("provideBook")
     void testGetAll(final Book book, final UUID bookId) throws Exception {
@@ -62,11 +60,6 @@ class BookControllerTests {
         verify(this.mapper, times(1)).toDto(List.of(book));
     }
 
-    /**
-     * Test case for testing the getById method.
-     *
-     * @throws Exception if an error occurs
-     */
     @ParameterizedTest
     @MethodSource("provideBook")
     void testGetById(final Book book, final UUID bookId) throws Exception {
@@ -85,11 +78,6 @@ class BookControllerTests {
         verify(this.mapper, times(1)).toDto(book);
     }
 
-    /**
-     * Test case for testing the getByIsbn method.
-     *
-     * @throws Exception if an error occurs
-     */
     @ParameterizedTest
     @MethodSource("provideBook")
     void testGetByIsbn(final Book book, final UUID bookId) throws Exception {
@@ -108,11 +96,6 @@ class BookControllerTests {
         verify(this.mapper, times(1)).toDto(book);
     }
 
-    /**
-     * Test case for testing the create method.
-     *
-     * @throws Exception if an error occurs
-     */
     @ParameterizedTest
     @MethodSource("provideBook")
     void testCreate(final Book book, final UUID bookId) throws Exception {
@@ -136,11 +119,6 @@ class BookControllerTests {
         verify(this.mapper, times(1)).toEntity(bookDto);
     }
 
-    /**
-     * Test case for testing the update method.
-     *
-     * @throws Exception if an error occurs
-     */
     @Test
     void testUpdate() throws Exception {
         var bookId = UUID.randomUUID();
@@ -165,11 +143,6 @@ class BookControllerTests {
         verify(this.mapper, times(1)).toDto(mockBook);
     }
 
-    /**
-     * Test case for testing the delete method.
-     *
-     * @throws Exception if an error occurs
-     */
     @Test
     void testDelete() throws Exception {
         var bookId = UUID.randomUUID();

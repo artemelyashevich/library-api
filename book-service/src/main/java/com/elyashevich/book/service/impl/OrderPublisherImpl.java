@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -28,15 +31,13 @@ public class OrderPublisherImpl implements OrderPublisher {
 
     @Override
     public void sendMessage(final OrderDto orderDto) throws JsonProcessingException {
-        if (!this.bookRepository.existsById(orderDto.bookId())) {
-            throw new ResourceNotFoundException("No such book with id: %s.".formatted(orderDto.bookId()));
+        if (!this.bookRepository.existsById(orderDto.getBookId())) {
+            throw new ResourceNotFoundException("No such book with id: %s.".formatted(orderDto.getBookId()));
         }
-
         log.debug("Try to send an order message: {}", orderDto);
+        orderDto.setExpireIn(LocalDateTime.now().plusDays(5));
         var order = serializeToJson(orderDto);
-
         this.kafkaTemplate.send(topicName, order);
-
         log.info("Order '{}' message has been successfully sent.", orderDto);
     }
 

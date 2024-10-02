@@ -25,9 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-/**
- * Test class for testing the BookService.
- */
 @ExtendWith(MockitoExtension.class)
 public class BookServiceTests {
 
@@ -40,9 +37,6 @@ public class BookServiceTests {
     @Mock
     private BookConverter converter;
 
-    /**
-     * Test case for testing the getById method with an existing book.
-     */
     @ParameterizedTest
     @MethodSource("provideBook")
     public void testGetById_ExistingBook(final Book book, final UUID id) {
@@ -55,9 +49,6 @@ public class BookServiceTests {
         verify(this.repository, times(1)).findById(id);
     }
 
-    /**
-     * Test case for testing the getByIsbn method with an existing book.
-     */
     @ParameterizedTest
     @MethodSource("provideBook")
     public void testGetByIsbn_ExistingBook(final Book book, UUID id) {
@@ -70,18 +61,12 @@ public class BookServiceTests {
         verify(this.repository, times(1)).findByIsbn(book.getIsbn());
     }
 
-    /**
-     * Test case for testing the getByIsbn method when it throws a ResourceNotFoundException.
-     */
     @ParameterizedTest
     @EmptySource
     public void testGetByIsbn_throwsException(final String isbn) {
         assertThrows(ResourceNotFoundException.class, () -> this.bookService.getByIsbn(isbn));
     }
 
-    /**
-     * Test case for testing the getAll method.
-     */
     @Test
     public void testGetAll() {
         // Act
@@ -93,9 +78,6 @@ public class BookServiceTests {
         verify(this.repository, times(1)).findAll();
     }
 
-    /**
-     * Test case for testing the create method.
-     */
     @ParameterizedTest
     @MethodSource("provideBook")
     public void testCreate(final Book book, final UUID bookId) {
@@ -108,9 +90,6 @@ public class BookServiceTests {
         verify(this.repository, times(1)).save(book);
     }
 
-    /**
-     * Test case for testing the delete method.
-     */
     @ParameterizedTest
     @MethodSource("provideBook")
     public void testDelete(final Book book, final UUID bookId) {

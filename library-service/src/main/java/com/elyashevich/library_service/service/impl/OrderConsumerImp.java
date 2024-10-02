@@ -33,7 +33,6 @@ public class OrderConsumerImp implements OrderConsumer {
     public void listen(final ConsumerRecord<String, String> record) throws JsonProcessingException {
         log.debug("Try to get an order message: {}", record.value());
         var dto = deserializeFromJson(record.value());
-
         this.orderService.create(this.orderMapper.toEntity(dto));
         log.info("Order '{}' message has been successfully got.", dto);
     }
